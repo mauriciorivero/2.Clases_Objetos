@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Backend Python - FastAPI & Flask</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px;
+            min-height: 600px;
+            animation: fadeIn 0.5s;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            line-height: 1.6;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .keyword {
+            color: #ff79c6;
+        }
+
+        .string {
+            color: #50fa7b;
+        }
+
+        .comment {
+            color: #6272a4;
+        }
+
+        .function {
+            color: #8be9fd;
+        }
+
+        ul, ol {
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 60px;
+            background: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .slide-counter {
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.2em;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1.1em;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Diapositiva 1: Portada -->
+        <div class="slide active">
+            <h1>🚀 Backend con Python</h1>
+            <h2 style="text-align: center; border: none;">FastAPI & Flask</h2>
+            <div style="text-align: center; margin: 60px 0;">
+                <p style="font-size: 1.5em; color: #667eea;">Tutorial completo para crear aplicaciones web del lado del servidor</p>
+                <p style="font-size: 1.3em; margin-top: 40px;">📚 Caso de uso: Sistema de Biblioteca</p>
+            </div>
+            <div class="info-box">
+                <h3>🎯 Objetivos de Aprendizaje:</h3>
+                <ul>
+                    <li>Entender qué es un backend y su función</li>
+                    <li>Aprender a crear APIs REST con Python</li>
+                    <li>Comparar Flask y FastAPI</li>
+                    <li>Implementar operaciones CRUD</li>
+                    <li>Probar endpoints desde el navegador</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2: ¿Qué es el Backend? -->
+        <div class="slide">
+            <h2>🔧 ¿Qué es el Backend?</h2>
+            <p>El <strong>backend</strong> es la parte del servidor de una aplicación web que procesa la lógica de negocio, gestiona la base de datos y proporciona datos al frontend.</p>
+            
+            <h3>📊 Arquitectura Cliente-Servidor</h3>
+            <div class="info-box">
+                <p><strong>Cliente (Frontend):</strong> Navegador web, aplicación móvil → Solicita información</p>
+                <p><strong>Servidor (Backend):</strong> Procesa solicitudes, accede a datos → Envía respuestas</p>
+            </div>
+
+            <h3>💡 Conceptos Clave</h3>
+            <ul>
+                <li><strong>API (Application Programming Interface):</strong> Interfaz que permite la comunicación entre aplicaciones</li>
+                <li><strong>REST (Representational State Transfer):</strong> Estilo arquitectónico para crear APIs usando HTTP</li>
+                <li><strong>Endpoint:</strong> URL específica que realiza una acción (ej: /libros, /usuarios)</li>
+                <li><strong>JSON:</strong> Formato estándar para intercambiar datos (JavaScript Object Notation)</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 3: Métodos HTTP -->
+        <div class="slide">
+            <h2>🌐 Métodos HTTP (Verbos)</h2>
+            <p>Los métodos HTTP definen qué tipo de operación queremos realizar sobre un recurso:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th>Operación CRUD</th>
+                        <th>Descripción</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>GET</strong></td>
+                        <td>Read (Leer)</td>
+                        <td>Obtener información</td>
+                        <td>GET /libros → Lista todos los libros</td>
+                    </tr>
+                    <tr>
+                        <td><strong>POST</strong></td>
+                        <td>Create (Crear)</td>
+                        <td>Crear nuevo recurso</td>
+                        <td>POST /libros → Agregar un libro</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PUT</strong></td>
+                        <td>Update (Actualizar)</td>
+                        <td>Actualizar recurso completo</td>
+                        <td>PUT /libros/123 → Actualizar libro</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DELETE</strong></td>
+                        <td>Delete (Eliminar)</td>
+                        <td>Eliminar recurso</td>
+                        <td>DELETE /libros/123 → Borrar libro</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box">
+                <p><strong>💡 Nota:</strong> CRUD es el acrónimo de las operaciones básicas: Create, Read, Update, Delete</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 4: Flask vs FastAPI -->
+        <div class="slide">
+            <h2>⚖️ Flask vs FastAPI</h2>
+            <p>Ambos son frameworks de Python para crear backends, pero tienen diferencias importantes:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Característica</th>
+                        <th>Flask</th>
+                        <th>FastAPI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Año de creación</strong></td>
+                        <td>2010 (Maduro)</td>
+                        <td>2018 (Moderno)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rendimiento</strong></td>
+                        <td>Bueno</td>
+                        <td>Excelente (más rápido)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Documentación automática</strong></td>
+                        <td>No incluida</td>
+                        <td>Sí (Swagger UI)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validación de datos</strong></td>
+                        <td>Manual</td>
+                        <td>Automática (Pydantic)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Curva de aprendizaje</strong></td>
+                        <td>Más fácil para principiantes</td>
+                        <td>Requiere entender async/await</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Casos de uso</strong></td>
+                        <td>Proyectos pequeños/medianos</td>
+                        <td>APIs modernas de alto rendimiento</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success-box">
+                <p><strong>✅ Recomendación:</strong> Flask para aprender conceptos básicos, FastAPI para proyectos profesionales modernos.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5: Python en el Servidor -->
+        <div class="slide">
+            <h2>🐍 Python del Lado del Servidor</h2>
+            
+            <h3>¿Por qué Python para Backend?</h3>
+            <ul>
+                <li><strong>Sintaxis limpia y legible:</strong> Código fácil de mantener</li>
+                <li><strong>Gran ecosistema:</strong> Miles de librerías disponibles</li>
+                <li><strong>Comunidad activa:</strong> Mucho soporte y documentación</li>
+                <li><strong>Frameworks maduros:</strong> Django, Flask, FastAPI</li>
+            </ul>
+
+            <h3>🔄 Ciclo de Vida de una Solicitud</h3>
+            <div class="code-block">
+<span class="comment"># 1. Cliente hace solicitud HTTP</span>
+GET http://localhost:8000/libros
+
+<span class="comment"># 2. Servidor recibe solicitud</span>
+<span class="keyword">@app</span>.get(<span class="string">"/libros"</span>)
+
+<span class="comment"># 3. Ejecuta función correspondiente</span>
+<span class="keyword">def</span> <span class="function">obtener_libros</span>():
+    <span class="comment"># Lógica de negocio</span>
+    <span class="keyword">return</span> lista_libros
+
+<span class="comment"># 4. Convierte datos a JSON</span>
+{<span class="string">"libros"</span>: [...]}
+
+<span class="comment"># 5. Envía respuesta al cliente</span>
+HTTP/1.1 200 OK
+            </div>
+        </div>
+
+        <!-- Diapositiva 6: La Clase Libro -->
+        <div class="slide">
+            <h2>📚 Nuestra Clase: Libro</h2>
+            <p>Vamos a usar una clase Python que representa un libro en una biblioteca:</p>
+
+            <div class="code-block">
+<span class="keyword">class</span> <span class="function">Libro</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, title, isbn, author, year, num_pages, available):
+        self.__title = title
+        self.__isbn = isbn
+        self.__author = author
+        self.__publication_year = year
+        self.__total_num_pages = num_pages
+        self.__is_available = available
+    
+    <span class="comment"># Métodos importantes</span>
+    <span class="keyword">def</span> <span class="function">loan</span>(self):
+        <span class="string">"""Presta el libro"""</span>
+        self.__is_available = <span class="keyword">False</span>
+    
+    <span class="keyword">def</span> <span class="function">return_book</span>(self):
+        <span class="string">"""Devuelve el libro"""</span>
+        self.__is_available = <span class="keyword">True</span>
+            </div>
+
+            <div class="info-box">
+                <h3>🔒 Encapsulamiento</h3>
+                <p>Los atributos usan <code>__</code> (doble guion bajo) para ser privados. Se acceden mediante <strong>properties</strong> (@property).</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7: Paso 1 - Instalación -->
+        <div class="slide">
+            <h2><span class="step-number">1</span> Instalación y Configuración</h2>
+            
+            <h3>📋 Prerrequisitos</h3>
+            <ul>
+                <li>Python 3.7 o superior instalado</li>
+                <li>Editor de código (VS Code, PyCharm, etc.)</li>
+                <li>Terminal o línea de comandos</li>
+            </ul>
+
+            <h3>💻 Instalación de Dependencias</h3>
+            <div class="code-block">
+<span class="comment"># Crear entorno virtual (recomendado)</span>
+python -m venv venv
+
+<span class="comment"># Activar entorno virtual</span>
+<span class="comment"># En Windows:</span>
+venv\Scripts\activate
+<span class="comment"># En Mac/Linux:</span>
+source venv/bin/activate
+
+<span class="comment"># Instalar Flask</span>
+pip install flask
+
+<span class="comment"># Instalar FastAPI y servidor Uvicorn</span>
+pip install fastapi uvicorn
+            </div>
+
+            <div class="highlight-box">
+                <p><strong>💡 Tip:</strong> El entorno virtual aísla las dependencias de tu proyecto, evitando conflictos con otros proyectos.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8: Paso 2 - Estructura Flask -->
+        <div class="slide">
+            <h2><span class="step-number">2</span> Crear Aplicación con Flask</h2>
+            
+            <h3>🏗️ Estructura Básica</h3>
+            <div class="code-block">
+<span class="keyword">from</span> flask <span class="keyword">import</span> Flask, jsonify, request
+<span class="keyword">from</span> Libro <span class="keyword">import</span> Libro
+
+<span class="comment"># Crear instancia de Flask</span>
+app = Flask(__name__)
+
+<span class="comment"># Base de datos en memoria (lista)</span>
+libros = []
+
+<span class="comment"># Ruta raíz</span>
+<span class="keyword">@app</span>.route(<span class="string">'/'</span>)
+<span class="keyword">def</span> <span class="function">home</span>():
+    <span class="keyword">return</span> jsonify({<span class="string">"mensaje"</span>: <span class="string">"API de Biblioteca"</span>})
+
+<span class="comment"># Ejecutar servidor</span>
+<span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+    app.run(debug=<span class="keyword">True</span>, port=5000)
+            </div>
+
+            <h3>📝 Conceptos Clave</h3>
+            <ul>
+                <li><strong>@app.route():</strong> Decorador que define una URL (endpoint)</li>
+                <li><strong>jsonify():</strong> Convierte diccionarios Python a JSON</li>
+                <li><strong>debug=True:</strong> Recarga automáticamente al guardar cambios</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 9: Paso 3 - Endpoints Flask -->
+        <div class="slide">
+            <h2><span class="step-number">3</span> Implementar Endpoints CRUD - Flask</h2>
+            
+            <h3>GET - Obtener todos los libros</h3>
+            <div class="code-block">
+<span class="keyword">@app</span>.route(<span class="string">'/libros'</span>, methods=[<span class="string">'GET'</span>])
+<span class="keyword">def</span> <span class="function">obtener_libros</span>():
+    lista = []
+    <span class="keyword">for</span> libro <span class="keyword">in</span> libros:
+        lista.append({
+            <span class="string">"isbn"</span>: libro.isbn,
+            <span class="string">"titulo"</span>: libro.title,
+            <span class="string">"autor"</span>: libro.author,
+            <span class="string">"anio"</span>: libro.publication_year,
+            <span class="string">"paginas"</span>: libro.total_num_pages,
+            <span class="string">"disponible"</span>: libro.is_available
+        })
+    <span class="keyword">return</span> jsonify(lista)
+            </div>
+
+            <h3>POST - Crear un nuevo libro</h3>
+            <div class="code-block">
+<span class="keyword">@app</span>.route(<span class="string">'/libros'</span>, methods=[<span class="string">'POST'</span>])
+<span class="keyword">def</span> <span class="function">crear_libro</span>():
+    data = request.get_json()
+    nuevo_libro = Libro(
+        data[<span class="string">'titulo'</span>], data[<span class="string">'isbn'</span>], data[<span class="string">'autor'</span>],
+        data[<span class="string">'anio'</span>], data[<span class="string">'paginas'</span>], data[<span class="string">'disponible'</span>]
+    )
+    libros.append(nuevo_libro)
+    <span class="keyword">return</span> jsonify({<span class="string">"mensaje"</span>: <span class="string">"Libro creado"</span>}), 201
+            </div>
+        </div>
+
+        <!-- Diapositiva 10: Paso 4 - FastAPI -->
+        <div class="slide">
+            <h2><span class="step-number">4</span> Crear Aplicación con FastAPI</h2>
+            
+            <h3>🚀 Estructura Básica</h3>
+            <div class="code-block">
+<span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI
+<span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel
+<span class="keyword">from</span> Libro <span class="keyword">import</span> Libro
+
+<span class="comment"># Crear instancia de FastAPI</span>
+app = FastAPI()
+
+<span class="comment"># Modelo de datos con Pydantic</span>
+<span class="keyword">class</span> <span class="function">LibroInput</span>(BaseModel):
+    titulo: str
+    isbn: str
+    autor: str
+    anio: int
+    paginas: int
+    disponible: bool
+
+<span class="comment"># Base de datos en memoria</span>
+libros = []
+            </div>
+
+            <div class="success-box">
+                <h3>✨ Ventajas de FastAPI</h3>
+                <ul>
+                    <li><strong>Validación automática:</strong> Pydantic valida los datos de entrada</li>
+                    <li><strong>Documentación automática:</strong> Acceder a /docs para ver Swagger UI</li>
+                    <li><strong>Type hints:</strong> Usa anotaciones de tipo de Python</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 11: Paso 5 - Endpoints FastAPI -->
+        <div class="slide">
+            <h2><span class="step-number">5</span> Implementar Endpoints CRUD - FastAPI</h2>
+            
+            <h3>GET - Obtener todos los libros</h3>
+            <div class="code-block">
+<span class="keyword">@app</span>.get(<span class="string">"/libros"</span>)
+<span class="keyword">async def</span> <span class="function">obtener_libros</span>():
+    lista = []
+    <span class="keyword">for</span> libro <span class="keyword">in</span> libros:
+        lista.append({
+            <span class="string">"isbn"</span>: libro.isbn,
+            <span class="string">"titulo"</span>: libro.title,
+            <span class="string">"autor"</span>: libro.author,
+            <span class="string">"anio"</span>: libro.publication_year,
+            <span class="string">"paginas"</span>: libro.total_num_pages,
+            <span class="string">"disponible"</span>: libro.is_available
+        })
+    <span class="keyword">return</span> lista
+            </div>
+
+            <h3>POST - Crear un nuevo libro</h3>
+            <div class="code-block">
+<span class="keyword">@app</span>.post(<span class="string">"/libros"</span>)
+<span class="keyword">async def</span> <span class="function">crear_libro</span>(libro_input: LibroInput):
+    nuevo_libro = Libro(
+        libro_input.titulo, libro_input.isbn, libro_input.autor,
+        libro_input.anio, libro_input.paginas, libro_input.disponible
+    )
+    libros.append(nuevo_libro)
+    <span class="keyword">return</span> {<span class="string">"mensaje"</span>: <span class="string">"Libro creado exitosamente"</span>}
+            </div>
+        </div>
+
+        <!-- Diapositiva 12: Paso 6 - Ejecutar Servidores -->
+        <div class="slide">
+            <h2><span class="step-number">6</span> Ejecutar los Servidores</h2>
+            
+            <h3>🔴 Flask</h3>
+            <div class="code-block">
+<span class="comment"># En la terminal, ejecutar:</span>
+python app_flask.py
+
+<span class="comment"># Servidor corriendo en:</span>
+http://localhost:5000
+            </div>
+
+            <h3>🟢 FastAPI</h3>
+            <div class="code-block">
+<span class="comment"># En la terminal, ejecutar:</span>
+uvicorn app_fastapi:app --reload
+
+<span class="comment"># Servidor corriendo en:</span>
+http://localhost:8000
+
+<span class="comment"># Documentación automática en:</span>
+http://localhost:8000/docs
+            </div>
+
+            <div class="info-box">
+                <p><strong>📌 Nota:</strong> El flag <code>--reload</code> hace que el servidor se reinicie automáticamente al detectar cambios en el código.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 13: Paso 7 - Probar en Navegador -->
+        <div class="slide">
+            <h2><span class="step-number">7</span> Probar la API desde el Navegador</h2>
+            
+            <h3>🌐 Método 1: Navegador Web (Solo GET)</h3>
+            <p>Abre tu navegador y visita:</p>
+            <div class="code-block">
+<span class="comment"># Para Flask:</span>
+http://localhost:5000/libros
+
+<span class="comment"># Para FastAPI:</span>
+http://localhost:8000/libros
+            </div>
+
+            <h3>📱 Método 2: Swagger UI (Solo FastAPI)</h3>
+            <p>FastAPI genera automáticamente una interfaz interactiva:</p>
+            <div class="code-block">
+http://localhost:8000/docs
+            </div>
+            <p>Desde aquí puedes probar todos los endpoints (GET, POST, PUT, DELETE) con una interfaz gráfica.</p>
+
+            <div class="success-box">
+                <p><strong>✅ Respuesta JSON esperada:</strong></p>
+                <div class="code-block">
+[
+    {
+        <span class="string">"isbn"</span>: <span class="string">"978-0-123456-78-9"</span>,
+        <span class="string">"titulo"</span>: <span class="string">"Cien Años de Soledad"</span>,
+        <span class="string">"autor"</span>: <span class="string">"Gabriel García Márquez"</span>,
+        <span class="string">"anio"</span>: 1967,
+        <span class="string">"paginas"</span>: 417,
+        <span class="string">"disponible"</span>: <span class="keyword">true</span>
+    }
+]
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14: Herramientas de Prueba -->
+        <div class="slide">
+            <h2>🛠️ Herramientas para Probar APIs</h2>
+            
+            <h3>1. Navegador (GET únicamente)</h3>
+            <p>Simplemente escribe la URL en la barra de direcciones.</p>
+
+            <h3>2. Extensiones del Navegador</h3>
+            <ul>
+                <li><strong>Thunder Client</strong> (VS Code)</li>
+                <li><strong>REST Client</strong> (VS Code)</li>
+            </ul>
+
+            <h3>3. Aplicaciones Desktop</h3>
+            <ul>
+                <li><strong>Postman:</strong> La más popular y completa</li>
+                <li><strong>Insomnia:</strong> Interfaz más simple</li>
+                <li><strong>HTTPie Desktop:</strong> Open source</li>
+            </ul>
+
+            <h3>4. Línea de Comandos</h3>
+            <div class="code-block">
+<span class="comment"># Usando curl</span>
+curl http://localhost:8000/libros
+
+<span class="comment"># Usando httpie</span>
+http http://localhost:8000/libros
+            </div>
+        </div>
+
+        <!-- Diapositiva 15: Códigos de Estado HTTP -->
+        <div class="slide">
+            <h2>📊 Códigos de Estado HTTP</h2>
+            <p>Los servidores responden con códigos numéricos que indican el resultado:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Significado</th>
+                        <th>Cuándo se usa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>200</strong></td>
+                        <td>OK</td>
+                        <td>Solicitud exitosa (GET, PUT)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>201</strong></td>
+                        <td>Created</td>
+                        <td>Recurso creado exitosamente (POST)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>400</strong></td>
+                        <td>Bad Request</td>
+                        <td>Datos inválidos enviados</td>
+                    </tr>
+                    <tr>
+                        <td><strong>404</strong></td>
+                        <td>Not Found</td>
+                        <td>Recurso no encontrado</td>
+                    </tr>
+                    <tr>
+                        <td><strong>500</strong></td>
+                        <td>Internal Server Error</td>
+                        <td>Error en el servidor</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Diapositiva 16: Mejores Prácticas -->
+        <div class="slide">
+            <h2>⭐ Mejores Prácticas</h2>
+            
+            <h3>1. Nomenclatura de Endpoints</h3>
+            <ul>
+                <li>Usa sustantivos en plural: <code>/libros</code>, no <code>/libro</code></li>
+                <li>Usa minúsculas y guiones: <code>/libros-prestados</code></li>
+                <li>Jerárquico: <code>/autores/123/libros</code></li>
+            </ul>
+
+            <h3>2. Seguridad</h3>
+            <ul>
+                <li>Nunca expongas datos sensibles en URLs</li>
+                <li>Usa HTTPS en producción</li>
+                <li>Implementa autenticación (JWT, OAuth)</li>
+                <li>Valida siempre los datos de entrada</li>
+            </ul>
+
+            <h3>3. Manejo de Errores</h3>
+            <div class="code-block">
+<span class="keyword">try</span>:
+    <span class="comment"># Operación</span>
+    libro = buscar_libro(isbn)
+<span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+    <span class="keyword">return</span> jsonify({<span class="string">"error"</span>: str(e)}), 500
+            </div>
+        </div>
+
+        <!-- Diapositiva 17: Próximos Pasos -->
+        <div class="slide">
+            <h2>🎓 Próximos Pasos</h2>
+            
+            <h3>📚 Para Seguir Aprendiendo</h3>
+            <ul>
+                <li>Conectar a una base de datos real (PostgreSQL, MongoDB)</li>
+                <li>Implementar autenticación y autorización</li>
+                <li>Agregar paginación a listas grandes</li>
+                <li>Implementar filtros y búsqueda</li>
+                <li>Crear tests automatizados</li>
+                <li>Desplegar en la nube (Heroku, AWS, DigitalOcean)</li>
+            </ul>
+
+            <h3>🔗 Recursos Recomendados</h3>
+            <ul>
+                <li><strong>Flask:</strong> flask.palletsprojects.com</li>
+                <li><strong>FastAPI:</strong> fastapi.tiangolo.com</li>
+                <li><strong>REST API Best Practices:</strong> restfulapi.net</li>
+            </ul>
+
+            <div class="success-box">
+                <h3>🎉 ¡Felicitaciones!</h3>
+                <p>Has aprendido los fundamentos para crear backends con Python. Ahora practica construyendo tus propias APIs.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 18: Resumen -->
+        <div class="slide">
+            <h2>📝 Resumen del Tutorial</h2>
+            
+            <h3>✅ Lo que has aprendido:</h3>
+            <ol>
+                <li><strong>Conceptos de Backend:</strong> Cliente-servidor, APIs, REST</li>
+                <li><strong>Métodos HTTP:</strong> GET, POST, PUT, DELETE</li>
+                <li><strong>Flask:</strong> Framework ligero y simple</li>
+                <li><strong>FastAPI:</strong> Framework moderno y rápido</li>
+                <li><strong>Implementación CRUD:</strong> Operaciones completas</li>
+                <li><strong>Pruebas:</strong> Navegador, Swagger UI, herramientas</li>
+                <li><strong>Buenas prácticas:</strong> Nomenclatura, seguridad, errores</li>
+            </ol>
+
+            <div class="highlight-box">
+                <h3>🎯 Proyecto Completo</h3>
+                <p>Revisa los archivos:</p>
+                <ul>
+                    <li><code>app_flask.py</code> - Aplicación Flask completa</li>
+                    <li><code>app_fastapi.py</code> - Aplicación FastAPI completa</li>
+                    <li><code>Libro.py</code> - Clase de dominio</li>
+                    <li><code>requirements.txt</code> - Dependencias</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <h1 style="color: #667eea;">¡Éxito en tu camino como desarrollador backend! 🚀</h1>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+            <span class="slide-counter">
+                <span id="currentSlide">1</span> / <span id="totalSlides">18</span>
+            </span>
+            <button id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = currentSlide;
+            
+            // Deshabilitar botones en los extremos
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+            
+            // Scroll al inicio de la diapositiva
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Inicializar
+        showSlide(1);
+    </script>
+</body>
+</html>

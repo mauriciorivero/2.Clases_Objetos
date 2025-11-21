@@ -1,0 +1,38 @@
+# Entorno virtual
+venv/
+env/
+ENV/
+.venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Base de datos local
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de configuración local
+.env
+config.local.py
+
